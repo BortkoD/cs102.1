@@ -1,4 +1,5 @@
 import pygame
+import argparse
 from life import GameOfLife
 from pygame.locals import *
 from ui import UI
@@ -81,6 +82,11 @@ class GUI(UI):
 
 
 if __name__ == "__main__":
-    gol = GameOfLife((640, 240))
+    parser = argparse.ArgumentParser(prog="gof-gui.py", description="Game of Life")
+    parser.add_argument('-w', '--width', type=int, default=480, help="Ввод ширины поля")
+    parser.add_argument('-h', '--height', type=int, default=240, help="Ввод высоты поля")
+    parser.add_argument('-cs', '--cell_size', type=int, default=10, help="Ввод стороны одной клетки")
+    args = parser.parse_args()
+    gol = GameOfLife((args.width, args.height), args.cell_size)
     ui = GUI(gol)
     ui.run()
