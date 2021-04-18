@@ -11,9 +11,19 @@ from pyvcs.repo import repo_find
 
 
 def hash_object(data: bytes, fmt: str, write: bool = False) -> str:
-    # PUT YOUR CODE HERE
-    ...
-
+    content = data.decode()
+    header = f"{fmt} {len(content)}\0"
+    store = header + content
+    hash = hashlib.sha1(store.encode()).hexdigest()
+    if write:
+        new_dir = hash[0:2]
+        new_file = hash[2:len(hash)]
+        dir = pathlib.Path(".").absolute()
+        git_dir = os.environ.get('GIT_DIR', default='.pyvcs')
+        os.makedirs(dir / git_dir / "objects" / new_dir, exist_ok=True)
+        with open(dir / git_dir / "objects" / new_dir / new_file, 'wb') as file:
+            file.write(zlib.compress(store.encode()))
+    return hash
 
 def resolve_object(obj_name: str, gitdir: pathlib.Path) -> tp.List[str]:
     # PUT YOUR CODE HERE
